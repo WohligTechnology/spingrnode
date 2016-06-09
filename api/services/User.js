@@ -8,30 +8,138 @@ var mongoose = require("mongoose");
 var lodash = require("lodash");
 var Schema = mongoose.Schema;
 var schema = new Schema({
-    name: String,
-    email: [String],
-    image: String,
-    gender: String,
-    contact: String,
-    dob: Date,
-    marriage: Date,
-    url: String,
-    address: String,
-    contacts: {
-        type: [{
-            name: String,
-            user: {
-                type: Schema.Types.ObjectId,
-                ref: 'User'
-            }
-        }],
-        index: true
+    name: {
+        type: String,
+        default: ""
     },
-    profession: String,
-    company: String,
-    facebook: String,
-    google: String,
-    twitter: String,
+    designation: {
+        type: String,
+        default: ""
+    },
+    companyName: {
+        type: String,
+        default: ""
+    },
+    lineOfBusiness: {
+        type: String,
+        default: ""
+    },
+    officeAddress: {
+        address: {
+            type: String,
+            default: ""
+        },
+        city: {
+            type: String,
+            default: ""
+        },
+        state: {
+            type: String,
+            default: ""
+        },
+        pincode: {
+            type: String,
+            default: ""
+        },
+        country: {
+            type: String,
+            default: ""
+        }
+    },
+    contactDetails: {
+        mobileNumber: {
+            type: String,
+            default: ""
+        },
+        directLandline: {
+            type: String,
+            default: ""
+        },
+        boardLandline: {
+            type: String,
+            default: ""
+        },
+        extension: {
+            type: String,
+            default: ""
+        },
+        email: {
+            type: String,
+            default: ""
+        },
+        website: {
+            type: String,
+            default: ""
+        },
+        recordgps: {
+            type: String,
+            default: ""
+        }
+    },
+    profilePicture: {
+        type: String,
+        default: ""
+    },
+    birthDate: {
+        type: String,
+        default: ""
+    },
+    anniversary: {
+        type: String,
+        default: ""
+    },
+    residentialAddress: {
+        address: {
+            type: String,
+            default: ""
+        },
+        city: {
+            type: String,
+            default: ""
+        },
+        state: {
+            type: String,
+            default: ""
+        },
+        pincode: {
+            type: String,
+            default: ""
+        },
+        country: {
+            type: String,
+            default: ""
+        }
+    },
+    contactPersonalDetails: {
+        mobileNumber: {
+            type: String,
+            default: ""
+        },
+        homeLandline: {
+            type: String,
+            default: ""
+        },
+        twitterhandle: {
+            type: String,
+            default: ""
+        },
+        facebookpage: {
+            type: String,
+            default: ""
+        },
+        email: {
+            type: String,
+            default: ""
+        },
+        website: {
+            type: String,
+            default: ""
+        },
+        recordgps: {
+            type: String,
+            default: ""
+        }
+    },
     timestamp: {
         type: Date,
         default: Date.now
@@ -40,7 +148,8 @@ var schema = new Schema({
         type: Date,
         default: Date.now
     },
-    modificationDate: Date
+    modificationDate: Date,
+    contact: Number,
 });
 module.exports = mongoose.model("User", schema);
 var Sample = mongoose.model("User", schema);

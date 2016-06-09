@@ -30,7 +30,7 @@ module.exports = {
     },
     getOne: function(req, res) {
         if (req.body) {
-            if (req.body._id && req.body._id != "") {
+            if (req.body._id && req.body._id !== "") {
                 User.getOne(req.body, function(err, data) {
                     if (err) {
                         res.json({
