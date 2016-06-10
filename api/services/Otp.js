@@ -72,7 +72,7 @@ var model = {
                 console.log(err);
                 callback(err, null);
             } else {
-                if (data2 != null) {
+                if (data2 !== null) {
                     User.saveData(data, function(err, data3) {
                         if (err) {
                             console.log(err);

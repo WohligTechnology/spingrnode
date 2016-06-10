@@ -399,7 +399,9 @@ var model = {
                     value: false
                 });
             } else {
-                callback(res);
+              console.log("data found");
+              console.log(res);
+                callback(null,res);
             }
         });
     },
