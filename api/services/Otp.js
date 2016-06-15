@@ -36,14 +36,15 @@ var model = {
                             callback(err, null);
                         } else {
 
-                            callback(null, {message: "OTP generated"});
+                            callback(null, data2);
+                            // callback(null, {message: "OTP generated"});
 
                         }
                     });
                 } else {
                     data.timestamp = new Date();
                     data.otp = (Math.random() + "").substring(2, 8);
-                    this.findOneAndUpdate({
+                    Otp.findOneAndUpdate({
                         contact: data.contact
                     }, data, function(err, data2) {
                         if (err) {
@@ -51,7 +52,9 @@ var model = {
                             callback(err, null);
                         } else {
 
-                            callback(null, {message: "OTP updated"});
+                            // callback(null, data2);
+                            // callback(null, {message: "OTP updated"});
+                            callback(null, data);
                         }
                     });
                 }
