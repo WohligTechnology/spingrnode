@@ -28,7 +28,6 @@ module.exports = {
             });
         }
     },
-
     checkOtp: function(req, res) {
         if (req.body) {
             if (req.body.contact && req.body.contact != "") {
@@ -40,11 +39,10 @@ module.exports = {
                         });
                     } else {
                         if (data._id) {
-													req.session.user = data;
-													console.log(req.session.user);
+                            req.session.user = data;
                             res.json({
                                 value: true,
-                                data: {message: "signup success"}
+                                data: { message: "signup success" }
                             });
                         } else {
                             res.json({

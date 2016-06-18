@@ -6,251 +6,301 @@
  */
 
 module.exports = {
-  save: function(req, res) {
-    if (req.body) {
-      User.saveData(req.body, function(err, data) {
-        if (err) {
-          res.json({
-            value: false,
-            data: err
-          });
-        } else {
-          res.json({
-            value: true,
-            data: data
-          });
-        }
-      });
-    } else {
-      res.json({
-        value: false,
-        data: "Invalid Call"
-      });
-    }
-  },
-  getUserDetails: function(req, res) {
-    if (req.body) {
-      if (req.session.user) {
-        req.body._id = req.session.user._id;
-        User.getSession(req.body, function(err, data) {
-          if (err) {
-            res.json({
-              value: false,
-              data: err
-            });
-          } else {
-            res.json({
-              value: true,
-              data: data
-            });
-          }
-        });
-      } else {
-        res.json({
-          value: false,
-          data: "User not logged in"
-        });
-      }
-    } else {
-      res.json({
-        value: false,
-        data: "Invalid Call"
-      });
-    }
-
-  },
-  getOne: function(req, res) {
-    if (req.body) {
-      if (req.body._id && req.body._id !== "") {
-        User.getOne(req.body, function(err, data) {
-          if (err) {
-            res.json({
-              value: false,
-              data: err
-            });
-          } else {
-            res.json({
-              value: true,
-              data: data
-            });
-          }
-        });
-      } else {
-        res.json({
-          value: false,
-          data: "Invalid Id"
-        });
-      }
-    } else {
-      res.json({
-        value: false,
-        data: "Invalid Call"
-      });
-    }
-  },
-
-  getSearch: function(req, res) {
-    if (req.body) {
-      if (req.body._id && req.body._id != "" && req.body.search && req.body.search != "") {
-        User.getSearch(req.body, function(err, data) {
-          if (err) {
-            res.json({
-              value: false,
-              data: err
-            });
-          } else {
-            res.json({
-              value: true,
-              data: data
-            });
-          }
-        });
-      } else {
-        res.json({
-          value: false,
-          data: "Invalid Params"
-        });
-      }
-    } else {
-      res.json({
-        value: false,
-        data: "Invalid Call"
-      });
-    }
-  },
-  saveContacts: function(req, res) {
-    if (req.body) {
-      if (req.session.user) {
-        req.body._id = req.session.user._id;
-        User.saveContacts(req.body, function(err, data) {
-          if (err) {
-            res.json({
-              value: false,
-              data: err
-            });
-          } else {
-            if (data._id) {
-              req.session.user = data;
-              res.json({
-                value: true,
-                data: {
-                  message: "contacts inserted"
+    save: function(req, res) {
+        if (req.body) {
+            User.saveData(req.body, function(err, data) {
+                if (err) {
+                    res.json({
+                        value: false,
+                        data: err
+                    });
+                } else {
+                    res.json({
+                        value: true,
+                        data: data
+                    });
                 }
-              });
-            } else {
-              res.json({
+            });
+        } else {
+            res.json({
                 value: false,
-                data: data
-              });
+                data: "Invalid Call"
+            });
+        }
+    },
+    getOne: function(req, res) {
+        if (req.body) {
+            if (req.body._id && req.body._id !== "") {
+                User.getOne(req.body, function(err, data) {
+                    if (err) {
+                        res.json({
+                            value: false,
+                            data: err
+                        });
+                    } else {
+                        res.json({
+                            value: true,
+                            data: data
+                        });
+                    }
+                });
+            } else {
+                res.json({
+                    value: false,
+                    data: "Invalid Id"
+                });
             }
-          }
-        });
-      } else {
-        res.json({
-          value: false,
-          data: "User not logged in"
-        });
-      }
-    } else {
-      res.json({
-        value: false,
-        data: "Invalid Call"
-      });
-    }
-  },
-
-  syncContacts: function(req, res) {
-    if (req.body) {
-      if (req.session.user) {
-        req.body._id = req.session.user._id;
-        User.syncContacts(req.body, function(err, data) {
-          if (err) {
+        } else {
             res.json({
-              value: false,
-              data: err
+                value: false,
+                data: "Invalid Call"
             });
-          } else {
+        }
+    },
+    getSearch: function(req, res) {
+        if (req.body) {
+            if (req.body._id && req.body._id != "" && req.body.search && req.body.search != "") {
+                User.getSearch(req.body, function(err, data) {
+                    if (err) {
+                        res.json({
+                            value: false,
+                            data: err
+                        });
+                    } else {
+                        res.json({
+                            value: true,
+                            data: data
+                        });
+                    }
+                });
+            } else {
+                res.json({
+                    value: false,
+                    data: "Invalid Params"
+                });
+            }
+        } else {
             res.json({
-              value: true,
-              data: data
+                value: false,
+                data: "Invalid Call"
             });
-          }
-        });
-      } else {
-        res.json({
-          value: false,
-          data: "User not logged in"
-        });
-      }
-    } else {
-      res.json({
-        value: false,
-        data: "Invalid Call"
-      });
-    }
-  },
-
-  getProfile: function(req, res) {
-    if (req.session.user) {
-      res.json({
-        value: true,
-        data: req.session.user
-      });
-    } else {
-      res.json({
-        value: false,
-        data: {}
-      });
-    }
-  },
-
-  logout: function(req, res) {
-    req.session.destroy(function(err) {
-      if (err) {
-        res.json({
-          value: false,
-          data: err
-        });
-      } else {
-        res.json({
-          value: true,
-          data: {}
-        });
-      }
-    });
-  },
-
-  editProfile: function(req, res) {
-    if (req.body) {
-      if (req.session.user) {
-        req.body._id = req.session.user._id;
-        User.editProfile(req.body, function(err, data) {
-          if (err) {
+        }
+    },
+    saveContacts: function(req, res) {
+        if (req.body) {
+            if (req.session.user) {
+                req.body._id = req.session.user._id;
+                User.saveContacts(req.body, function(err, data) {
+                    if (err) {
+                        res.json({
+                            value: false,
+                            data: err
+                        });
+                    } else {
+                        if (data.length > 0) {
+                            res.json({
+                                value: true,
+                                data: data
+                            });
+                        } else {
+                            res.json({
+                                value: false,
+                                data: data
+                            });
+                        }
+                    }
+                });
+            } else {
+                res.json({
+                    value: false,
+                    data: "User not logged in"
+                });
+            }
+        } else {
             res.json({
-              value: false,
-              data: err
+                value: false,
+                data: "Invalid Call"
             });
-          } else {
-            req.session.user = data;
+        }
+    },
+    syncContacts: function(req, res) {
+        if (req.body) {
+            if (req.session.user) {
+                req.body._id = req.session.user._id;
+                User.syncContacts(req.body, function(err, data) {
+                    if (err) {
+                        res.json({
+                            value: false,
+                            data: err
+                        });
+                    } else {
+                        res.json({
+                            value: true,
+                            data: data
+                        });
+                    }
+                });
+            } else {
+                res.json({
+                    value: false,
+                    data: "User not logged in"
+                });
+            }
+        } else {
             res.json({
-              value: true,
-              data: {
-                message: "user updated"
-              }
+                value: false,
+                data: "Invalid Call"
             });
-          }
+        }
+    },
+    getProfile: function(req, res) {
+        if (req.session.user) {
+            res.json({
+                value: true,
+                data: req.session.user
+            });
+        } else {
+            res.json({
+                value: false,
+                data: {}
+            });
+        }
+    },
+    logout: function(req, res) {
+        req.session.destroy(function(err) {
+            if (err) {
+                res.json({
+                    value: false,
+                    data: err
+                });
+            } else {
+                res.json({
+                    value: true,
+                    data: {}
+                });
+            }
         });
-      } else {
-        res.json({
-          value: false,
-          data: "User not logged in"
-        });
-      }
-    } else {
-      res.json({
-        value: false,
-        data: "Invalid Call"
-      });
-    }
-  },
+    },
+    editProfile: function(req, res) {
+        if (req.body) {
+            if (req.session.user) {
+                req.body._id = req.session.user._id;
+                User.editProfile(req.body, function(err, data) {
+                    if (err) {
+                        res.json({
+                            value: false,
+                            data: err
+                        });
+                    } else {
+                        req.session.user = data;
+                        res.json({
+                            value: true,
+                            data: {
+                                message: "user updated"
+                            }
+                        });
+                    }
+                });
+            } else {
+                res.json({
+                    value: false,
+                    data: "User not logged in"
+                });
+            }
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid Call"
+            });
+        }
+    },
+    getContacts: function(req, res) {
+        if (req.session.user) {
+            req.body._id = req.session.user._id;
+            User.getContacts(req.body, function(err, data) {
+                if (err) {
+                    res.json({
+                        value: false,
+                        data: err
+                    });
+                } else {
+                    res.json({
+                        value: true,
+                        data: data
+                    });
+                }
+            });
+        } else {
+            res.json({
+                value: false,
+                data: "User not logged in"
+            });
+        }
+    },
+    getRequests: function(req, res) {
+        if (req.body) {
+            User.getRequests(req.body, function(err, data) {
+                if (err) {
+                    res.json({
+                        value: false,
+                        data: err
+                    });
+                } else {
+                    res.json({
+                        value: true,
+                        data: data
+                    });
+                }
+            });
+        } else {
+            res.json({
+                value: false,
+                data: "User not logged in"
+            });
+        }
+    },
+    getSpingrContacts: function(req, res) {
+        if (req.body) {
+            User.getSpingrContacts(req.body, function(err, data) {
+                if (err) {
+                    res.json({
+                        value: false,
+                        data: err
+                    });
+                } else {
+                    res.json({
+                        value: true,
+                        data: data
+                    });
+                }
+            });
+        } else {
+            res.json({
+                value: false,
+                data: "User not logged in"
+            });
+        }
+    },
+    getRequests: function(req, res) {
+        if (req.body) {
+            User.getRequests(req.body, function(err, data) {
+                if (err) {
+                    res.json({
+                        value: false,
+                        data: err
+                    });
+                } else {
+                    res.json({
+                        value: true,
+                        data: data
+                    });
+                }
+            });
+        } else {
+            res.json({
+                value: false,
+                data: "User not logged in"
+            });
+        }
+    },
 };

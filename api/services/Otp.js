@@ -35,10 +35,8 @@ var model = {
                             console.log(err);
                             callback(err, null);
                         } else {
-
                             callback(null, data2);
                             // callback(null, {message: "OTP generated"});
-
                         }
                     });
                 } else {
@@ -51,7 +49,6 @@ var model = {
                             console.log(err);
                             callback(err, null);
                         } else {
-
                             // callback(null, data2);
                             // callback(null, {message: "OTP updated"});
                             callback(null, data);
@@ -61,8 +58,6 @@ var model = {
             }
         });
     },
-
-
     checkOtp: function(data, callback) {
         Otp.findOne({
             contact: data.contact,
