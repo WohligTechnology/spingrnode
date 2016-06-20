@@ -469,7 +469,7 @@ var model = {
             _id: data._id
         }, {
             "contacts.user": 1
-        }).populate("contacts.user", "_id companyName contact contactDetails name officeAddress profilePicture", null, { sort: { "name": 1 } }).lean().exec(function(err, res) {
+        }).populate("contacts.user", "_id companyName contact contactDetails name officeAddress profilePicture companyLogo designation lineOfBusiness", null, { sort: { "name": 1 } }).lean().exec(function(err, res) {
             if (err) {
                 console.log(err);
                 callback(err, null);

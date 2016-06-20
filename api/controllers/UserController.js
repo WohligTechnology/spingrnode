@@ -260,7 +260,8 @@ module.exports = {
         }
     },
     getSpingrContacts: function(req, res) {
-        if (req.body) {
+        if (req.session.user) {
+            req.body._id = req.session.user._id;
             User.getSpingrContacts(req.body, function(err, data) {
                 if (err) {
                     res.json({
@@ -284,6 +285,29 @@ module.exports = {
     getRequests: function(req, res) {
         if (req.body) {
             User.getRequests(req.body, function(err, data) {
+                if (err) {
+                    res.json({
+                        value: false,
+                        data: err
+                    });
+                } else {
+                    res.json({
+                        value: true,
+                        data: data
+                    });
+                }
+            });
+        } else {
+            res.json({
+                value: false,
+                data: "User not logged in"
+            });
+        }
+    },
+    getUserDetails: function(req, res) {
+        if (req.session.user) {
+            req.body._id = req.session.user._id;
+            User.getOne(req.body, function(err, data) {
                 if (err) {
                     res.json({
                         value: false,
