@@ -29,12 +29,26 @@ var model = {
     saveData: function(data, callback) {
         var notification = this(data);
         notification.status = "Pending";
-        notification.save(function(err, data) {
+        this.count({
+            to: data.to,
+            from: data.from
+        }).lean().exec(function(err, found) {
             if (err) {
                 console.log(err);
                 callback(err, null);
             } else {
-                callback(null, data);
+                if (found == 0) {
+                    notification.save(function(err, data) {
+                        if (err) {
+                            console.log(err);
+                            callback(err, null);
+                        } else {
+                            callback(null, data);
+                        }
+                    });
+                } else {
+                    callback(null, found);
+                }
             }
         });
     },
@@ -138,13 +152,17 @@ var model = {
                             console.log(err);
                             callback(err, null);
                         } else {
-                            callback(null, { message: "Requests Sent" });
+                            callback(null, {
+                                message: "Requests Sent"
+                            });
                         }
                     });
                 }
             });
         } else {
-            callback(null, { message: "No to contact found" });
+            callback(null, {
+                message: "No to contact found"
+            });
         }
     },
     findPending: function(data, callback) {
@@ -163,41 +181,64 @@ var model = {
     acceptShare: function(data, callback) {
         this.findOneAndUpdate({
             _id: data._id
-        }, { status: "Accepted" }, function(err, data2) {
+        }, {
+            status: "Accepted"
+        }, function(err, data2) {
             if (err) {
                 console.log(err);
                 callback(err, null);
             } else {
                 User.find({
-                    _id: data._id,
+                    _id: data.sessionid,
                     "contacts.user": data.user
                 }, {
                     "contacts.$": 1
                 }).exec(function(err, data2) {
-                    if (data2 && data2[0] && data2[0].contacts && data2[0].contacts[0]) {
-                        callback(null, { message: "Already in contact" });
-                    } else if (err) {
-                        console.log(err);
-                        callback(err, null);
-                    } else {
-                        User.update({
-                            _id: data.sessionid
-                        }, {
-                            $addToSet: {
-                                contacts: {
-                                    name: data.name,
-                                    contact: data.contact,
-                                    user: data.user
-                                }
-                            }
-                        }, function(err, saveres) {
+                    function updateUser(matchobj, updateobj) {
+                        User.update(matchobj, updateobj, function(err, updated) {
                             if (err) {
                                 console.log(err);
                                 callback(err, null);
                             } else {
-                                callback(null, { message: "Added successfully" });
+                                callback(null, {
+                                    message: "Updated"
+                                });
                             }
                         });
+                    }
+                    if (data2 && data2[0] && data2[0].contacts && data2[0].contacts[0]) {
+                        data2[0].contacts.accepted = true;
+                        var tobechanged = {};
+                        var attribute = "contacts.$.";
+                        _.forIn(data2[0].contacts, function(value, key) {
+                            tobechanged[attribute + key] = value;
+                        });
+                        var mobj = {
+                            _id: data.sessionid,
+                            "contacts.user": data.user
+                        };
+                        var uobj = {
+                            $set: tobechanged
+                        }
+                        updateUser(mobj, uobj);
+                    } else if (err) {
+                        console.log(err);
+                        callback(err, null);
+                    } else {
+                        var mobj = {
+                            _id: data.sessionid
+                        };
+                        var uobj = {
+                            $addToSet: {
+                                contacts: {
+                                    name: data.name,
+                                    contact: data.contact,
+                                    user: data.user,
+                                    accepted: true
+                                }
+                            }
+                        };
+                        updateUser(mobj, uobj);
                     }
                 });
             }
@@ -245,6 +286,43 @@ var model = {
                 callback(null, resArr);
             }
         })
+    },
+    addAndShare: function(data, callback) {
+        var shareObj = {
+            request: [{
+                _id: data.user
+            }],
+            _id: data.sessionid
+        };
+        async.parallel([
+            function(cb) {
+                Notification.acceptShare(data, function(error, respo) {
+                    if (error) {
+                        console.log(error);
+                        cb(err, null);
+                    } else {
+                        cb(null, respo);
+                    }
+                });
+            },
+            function(cb) {
+                Notification.sendNotification(shareObj, function(error, respo) {
+                    if (error) {
+                        console.log(error);
+                        cb(err, null);
+                    } else {
+                        cb(null, respo);
+                    }
+                });
+            }
+        ], function(err, result) {
+            if (err) {
+                console.log(err);
+                callback(err, null);
+            } else {
+                callback(null, result)
+            }
+        });
     }
 };
 module.exports = _.assign(module.exports, model);

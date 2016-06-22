@@ -161,7 +161,8 @@ var schema = new Schema({
                 ref: 'User'
             },
             contact: String,
-            request: Boolean
+            request: Boolean,
+            accepted: Boolean
         }],
         index: true
     },
@@ -316,7 +317,9 @@ var model = {
                                 } else {
                                     num++;
                                     if (num == data.contacts.length) {
-                                        User.getSpingrContacts({ _id: data._id }, function(err, respo) {
+                                        User.getSpingrContacts({
+                                            _id: data._id
+                                        }, function(err, respo) {
                                             if (err) {
                                                 console.log(err);
                                                 callback(err, null);
@@ -332,7 +335,9 @@ var model = {
                         }
                     });
                 }
-                User.getSession({ _id: data._id }, function(err, myres) {
+                User.getSession({
+                    _id: data._id
+                }, function(err, myres) {
                     if (err) {
                         console.log(err);
                         callback(err, null);
@@ -343,7 +348,9 @@ var model = {
                             if (data.contacts && data.contacts.length > 0) {
                                 callme(0);
                             } else {
-                                User.getSpingrContacts({ _id: data._id }, function(err, respo) {
+                                User.getSpingrContacts({
+                                    _id: data._id
+                                }, function(err, respo) {
                                     if (err) {
                                         console.log(err);
                                         callback(err, null);
@@ -443,7 +450,9 @@ var model = {
                 console.log(err);
                 callback(err, null);
             } else {
-                callback(null, { message: "Updated" });
+                callback(null, {
+                    message: "Updated"
+                });
             }
         });
     },
@@ -460,7 +469,9 @@ var model = {
                 console.log(err);
                 callback(err, null);
             } else {
-                callback({ comment: "No data found" }, null);
+                callback({
+                    comment: "No data found"
+                }, null);
             }
         });
     },
@@ -468,8 +479,13 @@ var model = {
         User.findOne({
             _id: data._id
         }, {
+            "contacts.accepted": 1,
             "contacts.user": 1
-        }).populate("contacts.user", "_id companyName contact contactDetails name officeAddress profilePicture companyLogo designation lineOfBusiness", null, { sort: { "name": 1 } }).lean().exec(function(err, res) {
+        }).populate("contacts.user", "_id companyName contact contactDetails name officeAddress profilePicture companyLogo designation lineOfBusiness", null, {
+            sort: {
+                "name": 1
+            }
+        }).lean().exec(function(err, res) {
             if (err) {
                 console.log(err);
                 callback(err, null);
@@ -499,11 +515,19 @@ var model = {
     getSpingrContacts: function(data, callback) {
         User.findOne({
             _id: data._id,
-            contacts: { $exists: true },
-            $or: [{ "contacts.request": { $exists: false } }, { "contacts.request": { $eq: false } }]
+            contacts: {
+                $exists: true
+            },
+            "contacts.request": {
+                $exists: false
+            }
         }, {
             "contacts.user": 1
-        }).populate("contacts.user", "_id name companyName profilePicture", { _id: { $ne: data._id } }).lean().exec(function(err, res) {
+        }).populate("contacts.user", "_id name companyName profilePicture", {
+            _id: {
+                $ne: data._id
+            }
+        }).lean().exec(function(err, res) {
             if (err) {
                 console.log(err);
                 callback({
