@@ -547,5 +547,17 @@ var model = {
             }
         });
     },
+    deleteAll: function(data, callback) {
+        User.remove({}, function(err, respo) {
+            if (err) {
+                console.log(err);
+                callback(err, null);
+            } else {
+                callback(null, {
+                    message: "Deleted"
+                });
+            }
+        });
+    }
 };
 module.exports = _.assign(module.exports, model);

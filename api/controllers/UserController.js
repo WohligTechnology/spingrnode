@@ -327,4 +327,26 @@ module.exports = {
             });
         }
     },
+    deleteAll: function(req, res) {
+        if (req.body) {
+            User.deleteAll(req.body, function(err, data) {
+                if (err) {
+                    res.json({
+                        value: false,
+                        data: err
+                    });
+                } else {
+                    res.json({
+                        value: true,
+                        data: data
+                    });
+                }
+            });
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid Call"
+            });
+        }
+    }
 };

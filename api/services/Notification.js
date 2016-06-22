@@ -323,6 +323,18 @@ var model = {
                 callback(null, result)
             }
         });
+    },
+    deleteAll: function(data, callback) {
+        Notification.remove({}, function(err, respo) {
+            if (err) {
+                console.log(err);
+                callback(err, null);
+            } else {
+                callback(null, {
+                    message: "Deleted"
+                });
+            }
+        });
     }
 };
 module.exports = _.assign(module.exports, model);
