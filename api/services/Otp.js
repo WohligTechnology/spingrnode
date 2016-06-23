@@ -6,6 +6,7 @@
  */
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
+var request = require("request");
 var schema = new Schema({
     contact: String,
     otp: String,
@@ -19,8 +20,8 @@ d.setMinutes(d.getMinutes() - 10);
 module.exports = mongoose.model("Otp", schema);
 var model = {
     saveData: function(data, callback) {
+        data.otp = (Math.random() + "").substring(2, 6);
         var otp = this(data);
-        otp.otp = (Math.random() + "").substring(2, 8);
         this.count({
             contact: data.contact
         }, function(err, found) {
@@ -28,20 +29,27 @@ var model = {
                 console.log(err);
                 callback(err, null);
             } else {
-                // callback(null, data2);
                 if (found == 0) {
                     otp.save(function(err, data2) {
                         if (err) {
                             console.log(err);
                             callback(err, null);
                         } else {
-                            callback(null, data2);
-                            // callback(null, {message: "OTP generated"});
+                            request.get({
+                                url: "http://api-alerts.solutionsinfini.com/v3/?method=sms&api_key=A9da87d58f64f269c1fd24d7aafe36ba7&to=" + data.contact + "&sender=ApLion&message=Dear User, One Time Password (OTP) to complete your mobile number verification is " + data.otp + "&format=json"
+                            }, function(err, http, body) {
+                                if (err) {
+                                    console.log(err);
+                                    callback(err, null);
+                                } else {
+                                    console.log(body);
+                                    callback(null, data2);
+                                }
+                            });
                         }
                     });
                 } else {
                     data.timestamp = new Date();
-                    data.otp = (Math.random() + "").substring(2, 8);
                     Otp.findOneAndUpdate({
                         contact: data.contact
                     }, data, function(err, data2) {
@@ -49,9 +57,17 @@ var model = {
                             console.log(err);
                             callback(err, null);
                         } else {
-                            // callback(null, data2);
-                            // callback(null, {message: "OTP updated"});
-                            callback(null, data);
+                            request.get({
+                                url: "http://api-alerts.solutionsinfini.com/v3/?method=sms&api_key=A9da87d58f64f269c1fd24d7aafe36ba7&to=" + data.contact + "&sender=ApLion&message=Dear User, One Time Password (OTP) to complete your mobile number verification is " + data.otp + "&format=json"
+                            }, function(err, http, body) {
+                                if (err) {
+                                    console.log(err);
+                                    callback(err, null);
+                                } else {
+                                    console.log(body);
+                                    callback(null, data);
+                                }
+                            });
                         }
                     });
                 }
@@ -85,7 +101,6 @@ var model = {
                         message: "OTP expired"
                     });
                 }
-                // callback(null, data2);
             }
         });
     },
