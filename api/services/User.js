@@ -481,7 +481,7 @@ var model = {
         }, {
             "contacts.accepted": 1,
             "contacts.user": 1
-        }).populate("contacts.user", "_id companyName contact contactDetails name officeAddress profilePicture companyLogo designation lineOfBusiness", null, {
+        }).populate("contacts.user", "-contacts", null, {
             sort: {
                 "name": 1
             }
